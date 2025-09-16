@@ -19,21 +19,24 @@ public class Course {
 
     private String name;
 
+    private int limit;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> enrollments = new HashSet<>();
 
-    public Course(String code, String name) {
+    public Course(String code, String name, int limit) {
         this.code = code;
         this.name = name;
+        this.limit = limit;
     }
 
     public static Course announce(CourseAnnouncement announcement) {
-        return new Course(announcement.code(), announcement.name());
+        return new Course(announcement.code(), announcement.name(), announcement.limit());
     }
 
     public void enroll(String applicant) {
-        if (enrollments.contains(applicant)) {
-            return;
+        if (limit > 0 && enrollments.size() >= limit) {  //entitásban legyen az üzleti logika
+            throw new IllegalStateException("Course is full");
         }
         enrollments.add(applicant);
     }
